@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const pool = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const authMiddleware = require("./middleware/authMiddleware");
 const app = express();
 
 app.use(cors());
@@ -20,6 +21,13 @@ pool.connect()
 app.get("/health", (req, res) => {
   res.json({
     message: "Online Judge Backend Running",
+  });
+});
+app.get("/profile", authMiddleware, (req, res) => {
+  res.json({
+    success: true,
+    message: "Protected route accessed",
+    user: req.user,
   });
 });
 
