@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { createUser } = require("../models/userModel");
+const { createUser,findUserByEmail, } = require("../models/userModel");
 
 const register = async (req, res) => {
   try {
@@ -32,7 +32,49 @@ const register = async (req, res) => {
     });
   }
 };
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
+    const user = await findUserByEmail(email);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password_hash
+    );
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
-  register,
+  register,login,
 };
