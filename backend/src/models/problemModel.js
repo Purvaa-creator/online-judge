@@ -23,7 +23,23 @@ const createProblem = async (
   return result.rows[0];
 };
 
-module.exports = {
-  createProblem,
+const getAllProblems = async () => {
+  const result = await pool.query(
+    "SELECT * FROM problems ORDER BY id DESC"
+  );
+
+  return result.rows;
 };
+const getProblemById = async (id) => {
+  const result = await pool.query(
+    "SELECT * FROM problems WHERE id = $1",
+    [id]
+  );
+
+  return result.rows[0];
+};
+module.exports = {
+  createProblem,getAllProblems, getProblemById,
+};
+
 

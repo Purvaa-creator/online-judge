@@ -6,13 +6,28 @@ const authMiddleware = require(
 );
 
 const {
-  createProblemHandler,
+  createProblemHandler,getAllProblemsHandler, getProblemByIdHandler,
 } = require("../controllers/problemController");
-
+const {
+  createTestCaseHandler,
+} = require("../controllers/testCaseController");
+router.get(
+  "/",
+  getAllProblemsHandler
+);
+router.get(
+  "/:id",
+  getProblemByIdHandler
+);
 router.post(
   "/",
   authMiddleware,
   createProblemHandler
+);
+router.post(
+  "/:id/testcases",
+  authMiddleware,
+  createTestCaseHandler
 );
 
 module.exports = router;
