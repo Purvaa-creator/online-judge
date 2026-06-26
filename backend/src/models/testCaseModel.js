@@ -22,7 +22,21 @@ const createTestCase = async (
 
   return result.rows[0];
 };
+const getTestCasesByProblemId = async (
+  problemId
+) => {
+  const result = await pool.query(
+    `
+    SELECT *
+    FROM test_cases
+    WHERE problem_id = $1
+    ORDER BY id;
+    `,
+    [problemId]
+  );
 
+  return result.rows;
+};
 module.exports = {
-  createTestCase,
+  createTestCase, getTestCasesByProblemId,
 };
