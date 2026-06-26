@@ -32,7 +32,10 @@ console.log(testCases);
       await compileCpp(submission.code);
 
     const output =
-      await runExecutable(executable);
+  await runExecutable(
+    executable,
+    testCases[0].input
+  );
 
     console.log(
       "Program Output:",

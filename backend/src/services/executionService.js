@@ -1,12 +1,22 @@
 const { exec } = require("child_process");
+const fs = require("fs");
+const path = require("path");
 
 const runExecutable = (
-  executablePath
+  executablePath,
+  input
 ) => {
   return new Promise((resolve, reject) => {
 
+    const inputFile = path.join(
+      __dirname,
+      "../../temp/input.txt"
+    );
+
+    fs.writeFileSync(inputFile, input);
+
     exec(
-      executablePath,
+      `${executablePath} < ${inputFile}`,
       (error, stdout, stderr) => {
 
         if (error) {
