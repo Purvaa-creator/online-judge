@@ -17,11 +17,39 @@ const runExecutable = (
 
     exec(
       `${executablePath} < ${inputFile}`,
+  {
+        timeout: 2000,
+    },
       (error, stdout, stderr) => {
+         if (error) {
 
-        if (error) {
-          return reject(stderr);
-        }
+    if (error.killed) {
+
+        console.log(
+            "Time Limit Exceeded"
+        );
+
+        return reject({
+            type: "TIME_LIMIT_EXCEEDED",
+            message:
+                "Execution exceeded 2 seconds",
+        });
+
+    }
+
+    console.log(
+        "Runtime Error"
+    );
+
+    console.log(stderr);
+
+    return reject({
+        type: "RUNTIME_ERROR",
+        code: error.code,
+        message: stderr,
+    });
+
+}
 
         resolve(stdout.trim());
 

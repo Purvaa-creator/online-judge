@@ -1,9 +1,9 @@
 const {
   createSubmission, getAllSubmissions,getSubmissionById,
 } = require("../models/submissionModel");
-const {
-  judgeSubmission,
-} = require("../services/judgeService");
+const submissionQueue = require(
+  "../queues/submissionQueue"
+);
 const createSubmissionHandler = async (
   req,
   res
@@ -33,8 +33,11 @@ const createSubmissionHandler = async (
         language,
         code
       );
-await judgeSubmission(
-  submission.id
+await submissionQueue.add(
+  "judge",
+  {
+    submissionId: submission.id,
+  }
 );
     res.status(201).json({
       success: true,

@@ -31,24 +31,45 @@ console.log(testCases);
     const executable =
       await compileCpp(submission.code);
 
-    const output =
-  await runExecutable(
-    executable,
-    testCases[0].input
-  );
+    let verdict = "Accepted";
 
-    console.log(
-      "Program Output:",
-      output
+for (const testCase of testCases) {
+
+  const output =
+    await runExecutable(
+      executable,
+      testCase.input
     );
 
-    const expectedOutput =
-  testCases[0].expected_output.trim();
+  const expectedOutput =
+    testCase.expected_output.trim();
 
-const verdict =
-  output.trim() === expectedOutput
-    ? "Accepted"
-    : "Wrong Answer";
+  console.log(
+    `Running Test Case ${testCase.id}`
+  );
+
+  console.log(
+    "Input:",
+    testCase.input
+  );
+
+  console.log(
+    "Expected:",
+    expectedOutput
+  );
+
+  console.log(
+    "Actual:",
+    output
+  );
+
+  if (
+    output.trim() !== expectedOutput
+  ) {
+    verdict = "Wrong Answer";
+    break;
+  }
+}
 
 await updateSubmissionVerdict(
   submissionId,
@@ -56,27 +77,36 @@ await updateSubmissionVerdict(
 );
 
 console.log(
-  "Expected:",
-  expectedOutput
-);
-
-console.log(
-  "Actual:",
-  output
-);
-
-console.log(
-  "Verdict:",
+  "Final Verdict:",
   verdict
-);
-  } catch (error) {
-    console.error(error);
+);  } catch (error) {
 
-    await updateSubmissionVerdict(
-      submissionId,
-      "Compilation Error"
-    );
+  console.error(error);
+console.log(
+  "Judge Error Type:",
+  error.type
+);
+  let verdict = "Compilation Error";
+
+  if (
+    error.type === "RUNTIME_ERROR"
+  ) {
+    verdict = "Runtime Error";
   }
+
+  else if (
+    error.type ===
+    "TIME_LIMIT_EXCEEDED"
+  ) {
+    verdict =
+      "Time Limit Exceeded";
+  }
+
+  await updateSubmissionVerdict(
+    submissionId,
+    verdict
+  );
+}
 };
 
 module.exports = {

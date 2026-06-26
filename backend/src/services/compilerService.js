@@ -22,9 +22,19 @@ const compileCpp = (code) => {
       (error, stdout, stderr) => {
 
         if (error) {
-          return reject(stderr);
-        }
 
+    console.log(
+        "Compilation Failed"
+    );
+
+    console.log(stderr);
+
+    return reject({
+    type: "COMPILATION_ERROR",
+    message: stderr,
+});
+
+}
         resolve(executable);
 
       }
