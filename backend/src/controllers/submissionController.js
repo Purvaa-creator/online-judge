@@ -1,7 +1,9 @@
 const {
-  createSubmission,
+  createSubmission, getAllSubmissions,getSubmissionById,
 } = require("../models/submissionModel");
-
+const {
+  judgeSubmission,
+} = require("../services/judgeService");
 const createSubmissionHandler = async (
   req,
   res
@@ -31,7 +33,9 @@ const createSubmissionHandler = async (
         language,
         code
       );
-
+await judgeSubmission(
+  submission.id
+);
     res.status(201).json({
       success: true,
       submission,
@@ -43,7 +47,54 @@ const createSubmissionHandler = async (
     });
   }
 };
+const getAllSubmissionsHandler = async (
+  req,
+  res
+) => {
+  try {
+    const submissions =
+      await getAllSubmissions();
 
+    res.status(200).json({
+      success: true,
+      count: submissions.length,
+      submissions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const getSubmissionByIdHandler = async (
+  req,
+  res
+) => {
+  try {
+    const submission =
+      await getSubmissionById(
+        req.params.id
+      );
+
+    if (!submission) {
+      return res.status(404).json({
+        success: false,
+        message: "Submission not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      submission,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
-  createSubmissionHandler,
+  createSubmissionHandler,getAllSubmissionsHandler, getSubmissionByIdHandler,
 };
