@@ -2,6 +2,11 @@ const { exec } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
+const projectRoot = path.join(
+  __dirname,
+  "../.."
+);
+
 const runExecutable = (
   executablePath,
   input
@@ -15,41 +20,48 @@ const runExecutable = (
 
     fs.writeFileSync(inputFile, input);
 
+    const dockerCommand =
+      `docker run --rm --network=none -v ${projectRoot}/temp:/code ubuntu:latest bash -c "/code/main < /code/input.txt"`;
+
+    console.log("Docker Command:");
+    console.log(dockerCommand);
+
     exec(
-      `${executablePath} < ${inputFile}`,
-  {
+      dockerCommand,
+      {
         timeout: 2000,
-    },
+      },
       (error, stdout, stderr) => {
-         if (error) {
 
-    if (error.killed) {
+        if (error) {
 
-        console.log(
-            "Time Limit Exceeded"
-        );
+          if (error.killed) {
 
-        return reject({
-            type: "TIME_LIMIT_EXCEEDED",
-            message:
+            console.log(
+              "Time Limit Exceeded"
+            );
+
+            return reject({
+              type: "TIME_LIMIT_EXCEEDED",
+              message:
                 "Execution exceeded 2 seconds",
-        });
+            });
 
-    }
+          }
 
-    console.log(
-        "Runtime Error"
-    );
+          console.log(
+            "Runtime Error"
+          );
 
-    console.log(stderr);
+          console.log(stderr);
 
-    return reject({
-        type: "RUNTIME_ERROR",
-        code: error.code,
-        message: stderr,
-    });
+          return reject({
+            type: "RUNTIME_ERROR",
+            code: error.code,
+            message: stderr,
+          });
 
-}
+        }
 
         resolve(stdout.trim());
 

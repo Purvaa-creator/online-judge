@@ -17,10 +17,14 @@ const compileCpp = (code) => {
 
     fs.writeFileSync(cppFile, code);
 
-    exec(
-      `g++ ${cppFile} -o ${executable}`,
-      (error, stdout, stderr) => {
+    const projectRoot = path.join(
+  __dirname,
+  "../.."
+);
 
+exec(
+  `docker run --rm -v ${projectRoot}/temp:/code gcc:13 g++ /code/main.cpp -o /code/main`,
+  (error, stdout, stderr) => {
         if (error) {
 
     console.log(
