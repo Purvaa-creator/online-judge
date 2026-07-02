@@ -20,8 +20,8 @@ const runExecutable = (
 
     fs.writeFileSync(inputFile, input);
 
-    const dockerCommand =
-      `docker run --rm --network=none -v ${projectRoot}/temp:/code ubuntu:latest bash -c "/code/main < /code/input.txt"`;
+   const dockerCommand =
+  `docker run --rm --network=none --memory=128m -v ${projectRoot}/temp:/code ubuntu:latest bash -c "/code/main < /code/input.txt"`;
 
     console.log("Docker Command:");
     console.log(dockerCommand);
@@ -35,33 +35,46 @@ const runExecutable = (
 
         if (error) {
 
-          if (error.killed) {
+    // Time Limit
+    if (error.killed) {
 
-            console.log(
-              "Time Limit Exceeded"
-            );
+        console.log("Time Limit Exceeded");
 
-            return reject({
-              type: "TIME_LIMIT_EXCEEDED",
-              message:
+        return reject({
+            type: "TIME_LIMIT_EXCEEDED",
+            message:
                 "Execution exceeded 2 seconds",
-            });
+        });
 
-          }
+    }
 
-          console.log(
-            "Runtime Error"
-          );
+    // Memory Limit
+    // Memory Limit
+if (
+    error.code === 137 ||
+    stderr.includes("Killed")
+) {
 
-          console.log(stderr);
+    console.log("Memory Limit Exceeded");
 
-          return reject({
-            type: "RUNTIME_ERROR",
-            code: error.code,
-            message: stderr,
-          });
+    return reject({
+        type: "MEMORY_LIMIT_EXCEEDED",
+        message: stderr,
+    });
 
-        }
+}
+
+    console.log("Runtime Error");
+
+    console.log(stderr);
+
+    return reject({
+        type: "RUNTIME_ERROR",
+        code: error.code,
+        message: stderr,
+    });
+
+}
 
         resolve(stdout.trim());
 

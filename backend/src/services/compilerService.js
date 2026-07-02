@@ -1,8 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const { exec } = require("child_process");
+const languages = require("../docker/languages");
 
-const compileCpp = (code) => {
+const compileCpp = (
+  code,
+  language = "cpp"
+) => {
   return new Promise((resolve, reject) => {
 
     const cppFile = path.join(
@@ -18,27 +22,28 @@ const compileCpp = (code) => {
     fs.writeFileSync(cppFile, code);
 
     const projectRoot = path.join(
-  __dirname,
-  "../.."
-);
-
-exec(
-  `docker run --rm -v ${projectRoot}/temp:/code gcc:13 g++ /code/main.cpp -o /code/main`,
-  (error, stdout, stderr) => {
-        if (error) {
-
-    console.log(
-        "Compilation Failed"
+      __dirname,
+      "../.."
     );
 
-    console.log(stderr);
+    const config = languages[language];
 
-    return reject({
-    type: "COMPILATION_ERROR",
-    message: stderr,
-});
+    exec(
+      `docker run --rm -v ${projectRoot}/temp:/code ${config.image} ${config.compile}`,
+      (error, stdout, stderr) => {
 
-}
+        if (error) {
+
+          console.log("Compilation Failed");
+          console.log(stderr);
+
+          return reject({
+            type: "COMPILATION_ERROR",
+            message: stderr,
+          });
+
+        }
+
         resolve(executable);
 
       }
@@ -50,4 +55,3 @@ exec(
 module.exports = {
   compileCpp,
 };
-

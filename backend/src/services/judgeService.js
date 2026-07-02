@@ -88,20 +88,32 @@ console.log(
 );
   let verdict = "Compilation Error";
 
-  if (
-    error.type === "RUNTIME_ERROR"
-  ) {
-    verdict = "Runtime Error";
-  }
+  
 
-  else if (
+   if (
     error.type ===
     "TIME_LIMIT_EXCEEDED"
   ) {
     verdict =
       "Time Limit Exceeded";
   }
-
+else if (
+    error.type ===
+    "MEMORY_LIMIT_EXCEEDED"
+) {
+    verdict =
+      "Memory Limit Exceeded";
+}
+else if (
+    error.type === "RUNTIME_ERROR"
+) {
+    verdict = "Runtime Error";
+}
+else if (
+    error.type === "COMPILATION_ERROR"
+) {
+    verdict = "Compilation Error";
+}
   await updateSubmissionVerdict(
     submissionId,
     verdict
