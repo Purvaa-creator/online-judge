@@ -3,33 +3,34 @@ const path = require("path");
 const { exec } = require("child_process");
 const languages = require("../docker/languages");
 
-const compileCpp = (
+const compileCode = (
   code,
   language = "cpp"
 ) => {
   return new Promise((resolve, reject) => {
 
-    const cppFile = path.join(
-      __dirname,
-      "../../temp/main.cpp"
-    );
+    const config = languages[language];
+
+const sourceFile = path.join(
+  __dirname,
+  `../../temp/main.${config.extension}`
+);
 
     const executable = path.join(
       __dirname,
       "../../temp/main"
     );
 
-    fs.writeFileSync(cppFile, code);
+    fs.writeFileSync(sourceFile, code);
 
     const projectRoot = path.join(
       __dirname,
       "../.."
     );
 
-    const config = languages[language];
-
+    
     exec(
-      `docker run --rm -v ${projectRoot}/temp:/code ${config.image} ${config.compile}`,
+      `docker run --rm -v ${projectRoot}/temp:/code ${config.compileImage} ${config.compile}`,
       (error, stdout, stderr) => {
 
         if (error) {
@@ -53,5 +54,5 @@ const compileCpp = (
 };
 
 module.exports = {
-  compileCpp,
+  compileCode,
 };

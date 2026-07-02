@@ -1,7 +1,7 @@
 const { exec } = require("child_process");
 const fs = require("fs");
 const path = require("path");
-
+const languages = require("../docker/languages");
 const projectRoot = path.join(
   __dirname,
   "../.."
@@ -9,7 +9,7 @@ const projectRoot = path.join(
 
 const runExecutable = (
   executablePath,
-  input
+  input,language = "cpp",
 ) => {
   return new Promise((resolve, reject) => {
 
@@ -20,8 +20,27 @@ const runExecutable = (
 
     fs.writeFileSync(inputFile, input);
 
-   const dockerCommand =
-  `docker run --rm --network=none --memory=128m -v ${projectRoot}/temp:/code ubuntu:latest bash -c "/code/main < /code/input.txt"`;
+   const config = languages[language];
+if (language === "python") {
+
+  const pythonFile = path.join(
+    __dirname,
+    "../../temp/main.py"
+  );
+
+  fs.writeFileSync(
+    pythonFile,
+    executablePath
+  );
+
+}
+const dockerCommand =
+  `docker run --rm \
+--network=none \
+--memory=128m \
+-v ${projectRoot}/temp:/code \
+${config.runImage} \
+bash -c "${config.run} < /code/input.txt"`;
 
     console.log("Docker Command:");
     console.log(dockerCommand);
@@ -32,7 +51,13 @@ const runExecutable = (
         timeout: 2000,
       },
       (error, stdout, stderr) => {
+console.log("EXEC CALLBACK REACHED");
 
+  console.log("STDOUT:");
+  console.log(stdout);
+
+  console.log("STDERR:");
+  console.log(stderr);
         if (error) {
 
     // Time Limit

@@ -4,9 +4,9 @@ const {
 } = require("../models/submissionModel");
 
 const {
-  compileCpp,
+  compileCode,
 } = require("./compilerService");
-
+const languages = require("../docker/languages");
 const {
   runExecutable,
 } = require("./executionService");
@@ -28,18 +28,35 @@ console.log(testCases);
       `Judging submission ${submissionId}`
     );
 
-    const executable =
-      await compileCpp(submission.code);
+   
+
+const config =
+  languages[submission.language];
+
+let executable = null;
+
+if (config.compile) {
+
+  executable =
+    await compileCode(
+      submission.code,
+      submission.language
+    );
+
+}
 
     let verdict = "Accepted";
 
 for (const testCase of testCases) {
 
   const output =
-    await runExecutable(
-      executable,
-      testCase.input
-    );
+  await runExecutable(
+    submission.language === "python"
+      ? submission.code
+      : executable,
+    testCase.input,
+    submission.language
+  );
 
   const expectedOutput =
     testCase.expected_output.trim();
