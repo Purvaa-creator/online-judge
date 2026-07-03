@@ -42,8 +42,7 @@ const dockerCommand =
 ${config.runImage} \
 bash -c "${config.run} < /code/input.txt"`;
 
-    console.log("Docker Command:");
-    console.log(dockerCommand);
+    
 
     exec(
       dockerCommand,
@@ -51,13 +50,7 @@ bash -c "${config.run} < /code/input.txt"`;
         timeout: 2000,
       },
       (error, stdout, stderr) => {
-console.log("EXEC CALLBACK REACHED");
 
-  console.log("STDOUT:");
-  console.log(stdout);
-
-  console.log("STDERR:");
-  console.log(stderr);
         if (error) {
 
     // Time Limit

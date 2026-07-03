@@ -11,10 +11,10 @@ const compileCode = (
 
     const config = languages[language];
 
-const sourceFile = path.join(
-  __dirname,
-  `../../temp/main.${config.extension}`
-);
+    const sourceFile = path.join(
+      __dirname,
+      `../../temp/main.${config.extension}`
+    );
 
     const executable = path.join(
       __dirname,
@@ -23,12 +23,16 @@ const sourceFile = path.join(
 
     fs.writeFileSync(sourceFile, code);
 
+    // Python doesn't need compilation
+    if (!config.compiled) {
+      return resolve(executable);
+    }
+
     const projectRoot = path.join(
       __dirname,
       "../.."
     );
 
-    
     exec(
       `docker run --rm -v ${projectRoot}/temp:/code ${config.compileImage} ${config.compile}`,
       (error, stdout, stderr) => {
