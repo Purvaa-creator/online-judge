@@ -28,7 +28,11 @@ console.log(testCases);
       `Judging submission ${submissionId}`
     );
 
-   
+console.log("Submission language:");
+console.log(submission.language);
+
+console.log("Available languages:");
+console.log(Object.keys(languages));   
 
 const config =
   languages[submission.language];
@@ -51,12 +55,10 @@ for (const testCase of testCases) {
 
   const output =
   await runExecutable(
-    submission.language === "python"
-      ? submission.code
-      : executable,
-    testCase.input,
-    submission.language
-  );
+  executable,
+  testCase.input,
+  submission.language
+);
 
   const expectedOutput =
     testCase.expected_output.trim();

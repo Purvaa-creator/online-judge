@@ -21,19 +21,7 @@ const runExecutable = (
     fs.writeFileSync(inputFile, input);
 
    const config = languages[language];
-if (language === "python") {
 
-  const pythonFile = path.join(
-    __dirname,
-    "../../temp/main.py"
-  );
-
-  fs.writeFileSync(
-    pythonFile,
-    executablePath
-  );
-
-}
 const dockerCommand =
   `docker run --rm \
 --network=none \

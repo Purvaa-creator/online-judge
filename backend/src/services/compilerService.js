@@ -11,10 +11,16 @@ const compileCode = (
 
     const config = languages[language];
 
-    const sourceFile = path.join(
-      __dirname,
-      `../../temp/main.${config.extension}`
-    );
+    const fileName =
+  language === "java"
+    ? "Main.java"
+    : `main.${config.extension}`;
+
+const sourceFile = path.join(
+  __dirname,
+  "../../temp",
+  fileName
+);
 
     const executable = path.join(
       __dirname,
