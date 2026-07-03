@@ -1,6 +1,6 @@
 const {
   updateSubmissionVerdict,
-  getSubmissionById,
+  getSubmissionById,updateSubmissionMetrics,
 } = require("../models/submissionModel");
 
 const {
@@ -50,16 +50,17 @@ if (config.compile) {
 }
 
     let verdict = "Accepted";
-
+let executionTime = 0;
 for (const testCase of testCases) {
 
-  const output =
+  const result =
   await runExecutable(
-  executable,
-  testCase.input,
-  submission.language
-);
-
+    executable,
+    testCase.input,
+    submission.language
+  );
+ executionTime = result.executionTime;
+const output = result.output;
   const expectedOutput =
     testCase.expected_output.trim();
 
@@ -94,7 +95,11 @@ await updateSubmissionVerdict(
   submissionId,
   verdict
 );
-
+await updateSubmissionMetrics(
+  submissionId,
+    executionTime,
+  0
+);
 console.log(
   "Final Verdict:",
   verdict

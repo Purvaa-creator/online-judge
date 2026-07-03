@@ -11,6 +11,7 @@ const runExecutable = (
   executablePath,
   input,language = "cpp",
 ) => {
+const startTime = Date.now();
   return new Promise((resolve, reject) => {
 
     const inputFile = path.join(
@@ -82,8 +83,12 @@ if (
 
 }
 
-        resolve(stdout.trim());
+        const endTime = Date.now();
 
+resolve({
+  output: stdout.trim(),
+  executionTime: endTime - startTime,
+});
       }
     );
 

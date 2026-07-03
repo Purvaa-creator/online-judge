@@ -53,6 +53,25 @@ const updateSubmissionVerdict = async (
 
   return result.rows[0];
 };
+const updateSubmissionMetrics = async (
+  id,
+  executionTime,
+  memoryUsed
+) => {
+  const result = await pool.query(
+    `
+    UPDATE submissions
+    SET
+      execution_time_ms = $1,
+      memory_used_kb = $2
+    WHERE id = $3
+    RETURNING *;
+    `,
+    [executionTime, memoryUsed, id]
+  );
+
+  return result.rows[0];
+};
 module.exports = {
-  createSubmission, getAllSubmissions, getSubmissionById, updateSubmissionVerdict,
+  createSubmission, getAllSubmissions, getSubmissionById, updateSubmissionVerdict, updateSubmissionMetrics,
 };
