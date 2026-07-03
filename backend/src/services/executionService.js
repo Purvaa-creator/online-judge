@@ -27,6 +27,11 @@ const dockerCommand =
   `docker run --rm \
 --network=none \
 --memory=128m \
+--cpus=1 \
+--pids-limit=64 \
+--user 1000:1000 \
+--read-only \
+--security-opt=no-new-privileges \
 -v ${projectRoot}/temp:/code \
 ${config.runImage} \
 bash -c "${config.run} < /code/input.txt"`;
