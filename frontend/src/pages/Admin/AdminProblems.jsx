@@ -1,5 +1,3 @@
-function AdminProblems() {
-  return <h1>Manage Problems</h1>;
 import { useEffect, useState } from "react";
 import { getAllProblems } from "../../services/problemService.js";
 import {
@@ -39,14 +37,6 @@ function AdminProblems() {
   const [formError, setFormError] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [deletingId, setDeletingId] = useState(null);
-
-  const resetForm = () => {
-    setEditingProblem(null);
-    setFormTitle("");
-    setFormDescription("");
-    setFormDifficulty("easy");
-    setFormError("");
-  };
 
   const loadProblems = async () => {
     try {
@@ -96,6 +86,10 @@ function AdminProblems() {
 
   const handleCancelForm = () => {
     setFormMode("closed");
+    setEditingProblem(null);
+    setFormTitle("");
+    setFormDescription("");
+    setFormDifficulty("easy");
     setFormError("");
   };
 
@@ -356,9 +350,6 @@ function AdminProblems() {
       )}
     </div>
   );
-}
-
-export default AdminProblems;
 }
 
 export default AdminProblems;
