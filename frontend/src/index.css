@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+	--color-ink: #0F172A;
+	--color-paper: #F8FAF9;
+	--color-signal: #16A34A;
+	--color-signal-dark: #15803D;
+	--color-reject: #DC2626;
+	--color-pending: #D97706;
+	--font-display: 'JetBrains Mono', monospace;
+	--font-sans: 'Inter', sans-serif;
+}
+
+body {
+	font-family: 'Inter', sans-serif;
+	background-color: #0F172A;
+}
