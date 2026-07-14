@@ -24,7 +24,7 @@ function Login() {
         throw new Error("Login succeeded but no token was returned.");
       }
 
-      authLogin(response?.user, token);
+      authLogin(response?.user, token, response?.user?.role);
       navigate("/problems");
     } catch (loginError) {
       const backendMessage =

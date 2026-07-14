@@ -1,10 +1,15 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
-import { logout as authLogout } from "../services/authService.js";
+import {
+  getCurrentUser,
+  logout as authLogout,
+} from "../services/authService.js";
 
 const initialState = {
   user: null,
   token: null,
   isAuthenticated: false,
+  role: null,
+  hydrating: true,
 };
 
 function authReducer(state, action) {
@@ -14,9 +19,19 @@ function authReducer(state, action) {
         user: action.payload.user,
         token: action.payload.token,
         isAuthenticated: true,
+        role: action.payload.role,
+        hydrating: false,
+      };
+    case "HYDRATION_COMPLETE":
+      return {
+        ...state,
+        hydrating: false,
       };
     case "LOGOUT":
-      return initialState;
+      return {
+        ...initialState,
+        hydrating: false,
+      };
     default:
       return state;
   }
@@ -28,24 +43,39 @@ export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const hydrateAuth = async () => {
+      const token = localStorage.getItem("token");
 
-    if (token) {
-      dispatch({
-        type: "LOGIN",
-        payload: {
-          user: null,
-          token,
-        },
-      });
-    }
+      if (!token) {
+        dispatch({ type: "HYDRATION_COMPLETE" });
+        return;
+      }
+
+      try {
+        const currentUser = await getCurrentUser();
+
+        dispatch({
+          type: "LOGIN",
+          payload: {
+            user: currentUser,
+            token,
+            role: currentUser?.role,
+          },
+        });
+      } catch (error) {
+        localStorage.removeItem("token");
+        dispatch({ type: "LOGOUT" });
+      }
+    };
+
+    hydrateAuth();
   }, []);
 
-  const login = (user, token) => {
+  const login = (user, token, role) => {
     localStorage.setItem("token", token);
     dispatch({
       type: "LOGIN",
-      payload: { user, token },
+      payload: { user, token, role },
     });
   };
 

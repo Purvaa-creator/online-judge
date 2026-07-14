@@ -3,7 +3,7 @@ import { useAuth } from "../../stores/AuthContext.jsx";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, role, logout } = useAuth();
 
   const handleLogout = async () => {
     await logout();
@@ -26,6 +26,11 @@ function Navbar() {
           </Link>
           {isAuthenticated ? (
             <>
+              {role === "admin" ? (
+                <Link to="/admin" className="transition-colors hover:text-slate-900">
+                  Admin
+                </Link>
+              ) : null}
               <Link to="/submissions" className="transition-colors hover:text-slate-900">
                 Submissions
               </Link>

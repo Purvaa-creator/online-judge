@@ -9,6 +9,7 @@ import Profile from "../pages/Profile/Profile";
 import Submissions from "../pages/Submissions/Submissions";
 import Admin from "../pages/Admin/Admin";
 import ProtectedRoute from "../components/common/ProtectedRoute";
+import AdminRoute from "../components/common/AdminRoute.jsx";
 import MainLayout from "../layouts/MainLayout";
 
 function AppRoutes() {
@@ -23,7 +24,7 @@ function AppRoutes() {
           <Route path="/problems/:id" element={<ProblemDetails />} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/submissions" element={<ProtectedRoute><Submissions /></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
         </Route>
       </Routes>
     </BrowserRouter>
