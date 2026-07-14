@@ -1,6 +1,26 @@
 import { useEffect, useState } from "react";
+import Editor from "@monaco-editor/react";
 import { useParams } from "react-router-dom";
 import { getProblemById } from "../../services/problemService.js";
+import { executeCode } from "../../services/executeService.js";
+
+const starterTemplates = {
+  cpp: `#include <iostream>
+
+int main() {
+    return 0;
+}`,
+  python: `# Write your solution here`,
+  java: `public class Main {
+    public static void main(String[] args) {
+    }
+}`,
+  c: `#include <stdio.h>
+
+int main() {
+    return 0;
+}`,
+};
 
 function getDifficultyBadgeClasses(difficulty) {
   const normalizedDifficulty = String(difficulty ?? "").toLowerCase();
@@ -23,6 +43,14 @@ function getDifficultyBadgeClasses(difficulty) {
 function ProblemDetails() {
   const { id } = useParams();
   const [problem, setProblem] = useState(null);
+  const [language, setLanguage] = useState("cpp");
+  const [code, setCode] = useState(starterTemplates.cpp);
+  const [theme, setTheme] = useState("vs-dark");
+  const [customInput, setCustomInput] = useState("");
+  const [output, setOutput] = useState("");
+  const [running, setRunning] = useState(false);
+  const [runError, setRunError] = useState("");
+  const [executionTime, setExecutionTime] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -102,6 +130,51 @@ function ProblemDetails() {
   const timeLimitMs = problem.time_limit_ms ?? problem.timeLimitMs;
   const memoryLimitKb = problem.memory_limit_kb ?? problem.memoryLimitKb;
 
+  const handleLanguageChange = (event) => {
+    const nextLanguage = event.target.value;
+
+    setLanguage(nextLanguage);
+    setCode(starterTemplates[nextLanguage] ?? "");
+  };
+
+  const handleThemeChange = (event) => {
+    const nextTheme = event.target.value;
+
+    setTheme(nextTheme);
+  };
+
+  const handleRun = async () => {
+    setRunning(true);
+    setOutput("");
+    setRunError("");
+    setExecutionTime(null);
+
+    try {
+      const result = await executeCode(language, code, customInput);
+
+      setOutput(result?.output ?? "");
+      setExecutionTime(result?.executionTime ?? null);
+    } catch (err) {
+      const errorType = err?.response?.data?.type;
+      const errorMessage = err?.response?.data?.message;
+      const fallbackMessage = err?.message || "Unable to run code.";
+      const friendlyType = errorType
+        ? errorType
+            .split("_")
+            .map((part) => part.charAt(0) + part.slice(1).toLowerCase())
+            .join(" ")
+        : "Run Error";
+
+      setRunError(
+        errorType || errorMessage
+          ? `${friendlyType}: ${errorMessage || fallbackMessage}`
+          : fallbackMessage
+      );
+    } finally {
+      setRunning(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
@@ -122,6 +195,106 @@ function ProblemDetails() {
 
         <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700 sm:p-6">
           <div className="whitespace-pre-wrap">{description}</div>
+        </div>
+
+        <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="language">
+                  Language
+                </label>
+                <select
+                  id="language"
+                  value={language}
+                  onChange={handleLanguageChange}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                >
+                  <option value="cpp">C++</option>
+                  <option value="python">Python</option>
+                  <option value="java">Java</option>
+                  <option value="c">C</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="theme">
+                  Theme
+                </label>
+                <select
+                  id="theme"
+                  value={theme}
+                  onChange={handleThemeChange}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                >
+                  <option value="vs-dark">Dark</option>
+                  <option value="light">Light</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
+            <Editor
+              height="500px"
+              language={language}
+              theme={theme}
+              value={code}
+              onChange={(value) => setCode(value ?? "")}
+              options={{
+                fontSize: 14,
+                minimap: { enabled: false },
+                automaticLayout: true,
+              }}
+            />
+          </div>
+
+          <div className="mt-4">
+            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="customInput">
+              Custom Input
+            </label>
+            <textarea
+              id="customInput"
+              rows="4"
+              value={customInput}
+              onChange={(event) => setCustomInput(event.target.value)}
+              placeholder="Enter custom input here"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            />
+          </div>
+
+          <div className="mt-4 flex items-center justify-between gap-4">
+            <button
+              type="button"
+              onClick={handleRun}
+              disabled={running}
+              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {running ? "Running..." : "Run"}
+            </button>
+
+            {executionTime !== null ? (
+              <p className="text-xs text-slate-500">Executed in {executionTime} ms</p>
+            ) : null}
+          </div>
+
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <p className="mb-2 text-sm font-medium text-slate-700">Output</p>
+
+            {runError ? (
+              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                {runError}
+              </div>
+            ) : output ? (
+              <pre className="overflow-x-auto rounded-lg bg-slate-900 px-4 py-3 font-mono text-sm text-slate-100 whitespace-pre-wrap">
+                {output}
+              </pre>
+            ) : (
+              <div className="rounded-lg border border-dashed border-slate-300 px-3 py-4 text-sm text-slate-500">
+                Run your code to see output here
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
