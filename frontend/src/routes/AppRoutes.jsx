@@ -7,10 +7,14 @@ import Problems from "../pages/Problems/Problems";
 import ProblemDetails from "../pages/ProblemDetails/ProblemDetails";
 import Profile from "../pages/Profile/Profile";
 import Submissions from "../pages/Submissions/Submissions";
-import Admin from "../pages/Admin/Admin";
+import AdminDashboard from "../pages/Admin/AdminDashboard";
+import AdminProblems from "../pages/Admin/AdminProblems";
+import AdminUsers from "../pages/Admin/AdminUsers";
+import AdminSubmissions from "../pages/Admin/AdminSubmissions";
 import ProtectedRoute from "../components/common/ProtectedRoute";
 import AdminRoute from "../components/common/AdminRoute.jsx";
 import MainLayout from "../layouts/MainLayout";
+import AdminLayout from "../layouts/AdminLayout.jsx";
 
 function AppRoutes() {
   return (
@@ -24,7 +28,12 @@ function AppRoutes() {
           <Route path="/problems/:id" element={<ProblemDetails />} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/submissions" element={<ProtectedRoute><Submissions /></ProtectedRoute>} />
-          <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="problems" element={<AdminProblems />} />
+            <Route path="users" element={<AdminUsers />} />
+            <Route path="submissions" element={<AdminSubmissions />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
