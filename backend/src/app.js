@@ -5,6 +5,8 @@ const cors = require("cors");
 const pool = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const problemRoutes = require("./routes/problemRoutes");
+const userRoutes = require("./routes/userRoutes");
+const statsRoutes = require("./routes/statsRoutes");
 const submissionRoutes = require(
   "./routes/submissionRoutes"
 );
@@ -16,6 +18,8 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/problems", problemRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/stats", statsRoutes);
 app.use(
   "/api/submissions",
   submissionRoutes

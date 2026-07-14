@@ -9,7 +9,11 @@ const adminMiddleware = require(
 );
 
 const {
-  createProblemHandler,getAllProblemsHandler, getProblemByIdHandler,
+  createProblemHandler,
+  getAllProblemsHandler,
+  getProblemByIdHandler,
+  updateProblemHandler,
+  deleteProblemHandler,
 } = require("../controllers/problemController");
 const {
   createTestCaseHandler,
@@ -27,6 +31,18 @@ router.post(
   authMiddleware,
   adminMiddleware,
   createProblemHandler
+);
+router.put(
+  "/:id",
+  authMiddleware,
+  adminMiddleware,
+  updateProblemHandler
+);
+router.delete(
+  "/:id",
+  authMiddleware,
+  adminMiddleware,
+  deleteProblemHandler
 );
 router.post(
   "/:id/testcases",

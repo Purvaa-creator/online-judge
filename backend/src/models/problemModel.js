@@ -38,8 +38,33 @@ const getProblemById = async (id) => {
 
   return result.rows[0];
 };
+const updateProblem = async (
+  id,
+  title,
+  description,
+  difficulty
+) => {
+  const result = await pool.query(
+    "UPDATE problems SET title = $1, description = $2, difficulty = $3 WHERE id = $4 RETURNING *",
+    [title, description, difficulty, id]
+  );
+
+  return result.rows[0];
+};
+const deleteProblem = async (id) => {
+  const result = await pool.query(
+    "DELETE FROM problems WHERE id = $1 RETURNING *",
+    [id]
+  );
+
+  return result.rows[0];
+};
 module.exports = {
-  createProblem,getAllProblems, getProblemById,
+  createProblem,
+  getAllProblems,
+  getProblemById,
+  updateProblem,
+  deleteProblem,
 };
 
 

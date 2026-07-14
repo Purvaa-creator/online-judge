@@ -1,4 +1,10 @@
-const { createProblem,getAllProblems, getProblemById, } = require("../models/problemModel");
+const {
+  createProblem,
+  getAllProblems,
+  getProblemById,
+  updateProblem,
+  deleteProblem,
+} = require("../models/problemModel");
 
 const createProblemHandler = async (req, res) => {
   try {
@@ -87,7 +93,89 @@ const getProblemByIdHandler = async (
     });
   }
 };
+const updateProblemHandler = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      title,
+      description,
+      difficulty,
+    } = req.body;
+
+    if (
+      !title ||
+      !description ||
+      !difficulty
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const problem = await updateProblem(
+      req.params.id,
+      title,
+      description,
+      difficulty
+    );
+
+    if (!problem) {
+      return res.status(404).json({
+        success: false,
+        message: "Problem not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      problem,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const deleteProblemHandler = async (
+  req,
+  res
+) => {
+  try {
+    const problem = await deleteProblem(
+      req.params.id
+    );
+
+    if (!problem) {
+      return res.status(404).json({
+        success: false,
+        message: "Problem not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Problem deleted",
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
-  createProblemHandler,getAllProblemsHandler, getProblemByIdHandler,
+  createProblemHandler,
+  getAllProblemsHandler,
+  getProblemByIdHandler,
+  updateProblemHandler,
+  deleteProblemHandler,
 };
 

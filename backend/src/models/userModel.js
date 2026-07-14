@@ -31,9 +31,17 @@ const findUserById = async (id) => {
 
   return result.rows[0];
 };
+const getAllUsers = async () => {
+  const result = await pool.query(
+    "SELECT id, username, email, role, created_at FROM users ORDER BY id ASC"
+  );
+
+  return result.rows;
+};
 
 module.exports = {
   createUser,
-findUserByEmail,
+  findUserByEmail,
   findUserById,
+  getAllUsers,
 };
