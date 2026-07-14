@@ -14,3 +14,8 @@ export async function getSubmissionById(id) {
   const response = await apiClient.get(`/submissions/${id}`);
   return response.data.submission;
 }
+
+export async function getMySubmissions() {
+  const response = await apiClient.get("/submissions/mine");
+  return response.data.submissions;
+}
