@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { useParams } from "react-router-dom";
 import { getProblemById } from "../../services/problemService.js";
 import { executeCode } from "../../services/executeService.js";
+import {
+  createSubmission,
+  getSubmissionById,
+} from "../../services/submissionService.js";
 
 const starterTemplates = {
   cpp: `#include <iostream>
@@ -51,10 +55,31 @@ function ProblemDetails() {
   const [running, setRunning] = useState(false);
   const [runError, setRunError] = useState("");
   const [executionTime, setExecutionTime] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submission, setSubmission] = useState(null);
+  const [submitError, setSubmitError] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const pollingIntervalRef = useRef(null);
+  const isMountedRef = useRef(true);
+
+  const clearPollingInterval = () => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+  };
+
+  const formatSubmissionError = (err) => {
+    const backendMessage = err?.response?.data?.message || err?.message || "Submission failed.";
+    const backendType = err?.response?.data?.type;
+
+    return backendType ? `${backendType}: ${backendMessage}` : backendMessage;
+  };
 
   useEffect(() => {
+    isMountedRef.current = true;
+
     let isMounted = true;
 
     const loadProblem = async () => {
@@ -91,6 +116,8 @@ function ProblemDetails() {
 
     return () => {
       isMounted = false;
+      isMountedRef.current = false;
+      clearPollingInterval();
     };
   }, [id]);
 
@@ -173,6 +200,78 @@ function ProblemDetails() {
     } finally {
       setRunning(false);
     }
+  };
+
+  const handleSubmit = async () => {
+    if (!problem?.id) {
+      setSubmitError("Failed to submit problem.");
+      return;
+    }
+
+    clearPollingInterval();
+    setSubmitting(true);
+    setSubmitError("");
+    setSubmission(null);
+
+    try {
+      const createdSubmission = await createSubmission(problem.id, language, code);
+
+      if (!isMountedRef.current) {
+        return;
+      }
+
+      setSubmission(createdSubmission);
+
+      if (createdSubmission?.verdict && createdSubmission.verdict !== "pending") {
+        setSubmitting(false);
+        return;
+      }
+
+      pollingIntervalRef.current = setInterval(async () => {
+        try {
+          const latestSubmission = await getSubmissionById(createdSubmission.id);
+
+          if (!isMountedRef.current) {
+            return;
+          }
+
+          setSubmission(latestSubmission);
+
+          if (latestSubmission?.verdict !== "pending") {
+            clearPollingInterval();
+            setSubmitting(false);
+          }
+        } catch (err) {
+          clearPollingInterval();
+
+          if (isMountedRef.current) {
+            setSubmitError(formatSubmissionError(err));
+            setSubmitting(false);
+          }
+        }
+      }, 2000);
+    } catch (err) {
+      clearPollingInterval();
+
+      if (isMountedRef.current) {
+        setSubmitError(formatSubmissionError(err));
+        setSubmitting(false);
+      }
+    }
+  };
+
+  const verdictBadgeClasses = (verdict) => {
+    const normalizedVerdict = String(verdict ?? "").toLowerCase();
+
+    if (normalizedVerdict === "pending") {
+      return "bg-slate-100 text-slate-700";
+    }
+
+    if (normalizedVerdict === "accepted") {
+      return "bg-green-100 text-green-800";
+    }
+
+    return "bg-red-100 text-red-800";
   };
 
   return (
@@ -264,14 +363,29 @@ function ProblemDetails() {
           </div>
 
           <div className="mt-4 flex items-center justify-between gap-4">
-            <button
-              type="button"
-              onClick={handleRun}
-              disabled={running}
-              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              {running ? "Running..." : "Run"}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleRun}
+                disabled={running}
+                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {running ? "Running..." : "Run"}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="rounded-lg bg-slate-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {submitting
+                  ? submission?.verdict === "pending"
+                    ? "Judging..."
+                    : "Submitting..."
+                  : "Submit"}
+              </button>
+            </div>
 
             {executionTime !== null ? (
               <p className="text-xs text-slate-500">Executed in {executionTime} ms</p>
@@ -295,6 +409,49 @@ function ProblemDetails() {
               </div>
             )}
           </div>
+
+          {submitError ? (
+            <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {submitError}
+            </div>
+          ) : submission ? (
+            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <p className="mb-2 text-sm font-medium text-slate-700">Verdict</p>
+
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${verdictBadgeClasses(submission.verdict)}`}
+                  >
+                    {submission.verdict === "pending" ? (
+                      <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-slate-500" />
+                    ) : null}
+                    {submission.verdict === "pending"
+                      ? "Judging..."
+                      : submission.verdict === "Accepted"
+                        ? "Accepted"
+                        : submission.verdict}
+                  </span>
+
+                  {submission.verdict === "pending" ? (
+                    <span className="text-xs text-slate-500">Polling every 2 seconds</span>
+                  ) : null}
+                </div>
+
+                <div className="text-xs text-slate-500">
+                  {submission.execution_time_ms != null ? (
+                    <span>Execution Time: {submission.execution_time_ms} ms</span>
+                  ) : null}
+                  {submission.execution_time_ms != null && submission.memory_used_kb != null ? (
+                    <span> · </span>
+                  ) : null}
+                  {submission.memory_used_kb != null ? (
+                    <span>Memory Used: {submission.memory_used_kb} KB</span>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
