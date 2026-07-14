@@ -1,5 +1,5 @@
 const {
-  createSubmission, getAllSubmissions,getSubmissionById,
+  createSubmission, getAllSubmissions,getSubmissionsByUserId,getSubmissionById,
 } = require("../models/submissionModel");
 const submissionQueue = require(
   "../queues/submissionQueue"
@@ -70,6 +70,28 @@ const getAllSubmissionsHandler = async (
     });
   }
 };
+const getMySubmissionsHandler = async (
+  req,
+  res
+) => {
+  try {
+    const submissions =
+      await getSubmissionsByUserId(
+        req.user.id
+      );
+
+    res.status(200).json({
+      success: true,
+      count: submissions.length,
+      submissions,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 const getSubmissionByIdHandler = async (
   req,
   res
@@ -99,5 +121,5 @@ const getSubmissionByIdHandler = async (
   }
 };
 module.exports = {
-  createSubmissionHandler,getAllSubmissionsHandler, getSubmissionByIdHandler,
+  createSubmissionHandler,getAllSubmissionsHandler,getMySubmissionsHandler, getSubmissionByIdHandler,
 };

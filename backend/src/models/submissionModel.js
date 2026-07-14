@@ -29,6 +29,14 @@ const getAllSubmissions = async () => {
 
   return result.rows;
 };
+const getSubmissionsByUserId = async (userId) => {
+  const result = await pool.query(
+    "SELECT * FROM submissions WHERE user_id = $1 ORDER BY id DESC",
+    [userId]
+  );
+
+  return result.rows;
+};
 const getSubmissionById = async (id) => {
   const result = await pool.query(
     "SELECT * FROM submissions WHERE id = $1",
@@ -73,5 +81,5 @@ const updateSubmissionMetrics = async (
   return result.rows[0];
 };
 module.exports = {
-  createSubmission, getAllSubmissions, getSubmissionById, updateSubmissionVerdict, updateSubmissionMetrics,
+  createSubmission, getAllSubmissions, getSubmissionsByUserId, getSubmissionById, updateSubmissionVerdict, updateSubmissionMetrics,
 };

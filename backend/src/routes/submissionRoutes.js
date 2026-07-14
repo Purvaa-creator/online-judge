@@ -6,11 +6,16 @@ const authMiddleware = require(
 );
 
 const {
-  createSubmissionHandler, getAllSubmissionsHandler, getSubmissionByIdHandler,
+  createSubmissionHandler, getAllSubmissionsHandler, getMySubmissionsHandler, getSubmissionByIdHandler,
 } = require("../controllers/submissionController");
 router.get(
   "/",
   getAllSubmissionsHandler
+);
+router.get(
+  "/mine",
+  authMiddleware,
+  getMySubmissionsHandler
 );
 router.get(
   "/:id",
