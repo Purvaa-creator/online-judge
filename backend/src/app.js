@@ -8,6 +8,7 @@ const problemRoutes = require("./routes/problemRoutes");
 const submissionRoutes = require(
   "./routes/submissionRoutes"
 );
+const executeRoutes = require("./routes/executeRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(
   "/api/submissions",
   submissionRoutes
 );
+app.use("/api/execute", executeRoutes);
 pool.connect()
   .then(() => {
     console.log("PostgreSQL Connected");

@@ -5,27 +5,19 @@ const languages = require("../docker/languages");
 
 const compileCode = (
   code,
-  language = "cpp"
+  language = "cpp",
+  requestId
 ) => {
   return new Promise((resolve, reject) => {
-
     const config = languages[language];
 
-    const fileName =
-  language === "java"
-    ? "Main.java"
-    : `main.${config.extension}`;
+    const projectRoot = path.join(__dirname, "../..");
+    const tempDir = path.join(projectRoot, "temp", requestId);
+    const fileName = language === "java" ? "Main.java" : `main.${config.extension}`;
+    const sourceFile = path.join(tempDir, fileName);
+    const executable = path.join(tempDir, "main");
 
-const sourceFile = path.join(
-  __dirname,
-  "../../temp",
-  fileName
-);
-
-    const executable = path.join(
-      __dirname,
-      "../../temp/main"
-    );
+    fs.mkdirSync(tempDir, { recursive: true });
 
     fs.writeFileSync(sourceFile, code);
 
@@ -34,17 +26,10 @@ const sourceFile = path.join(
       return resolve(executable);
     }
 
-    const projectRoot = path.join(
-      __dirname,
-      "../.."
-    );
-
     exec(
-      `docker run --rm -v ${projectRoot}/temp:/code ${config.compileImage} ${config.compile}`,
+      `docker run --rm -v ${tempDir}:/code ${config.compileImage} ${config.compile}`,
       (error, stdout, stderr) => {
-
         if (error) {
-
           console.log("Compilation Failed");
           console.log(stderr);
 
@@ -56,10 +41,8 @@ const sourceFile = path.join(
         }
 
         resolve(executable);
-
       }
     );
-
   });
 };
 

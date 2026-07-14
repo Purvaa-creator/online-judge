@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 const {
   updateSubmissionVerdict,
   getSubmissionById,updateSubmissionMetrics,
@@ -16,14 +19,16 @@ const {
 const judgeSubmission = async (
   submissionId
 ) => {
+  const requestId = uuidv4();
+  const projectRoot = path.join(__dirname, "../..");
   try {
     const submission =
       await getSubmissionById(submissionId);
-const testCases =
-  await getTestCasesByProblemId(
-    submission.problem_id
-  );console.log("Loaded Test Cases:");
-console.log(testCases);
+    const testCases =
+      await getTestCasesByProblemId(
+        submission.problem_id
+      );console.log("Loaded Test Cases:");
+    console.log(testCases);
     console.log(
       `Judging submission ${submissionId}`
     );
@@ -44,7 +49,8 @@ if (config.compile) {
   executable =
     await compileCode(
       submission.code,
-      submission.language
+      submission.language,
+      requestId
     );
 
 }
@@ -57,7 +63,8 @@ for (const testCase of testCases) {
   await runExecutable(
     executable,
     testCase.input,
-    submission.language
+    submission.language,
+    requestId
   );
  executionTime = result.executionTime;
 const output = result.output;
@@ -143,6 +150,12 @@ else if (
     verdict
   );
 }
+  finally {
+    fs.rmSync(path.join(projectRoot, "temp", requestId), {
+      recursive: true,
+      force: true,
+    });
+  }
 };
 
 module.exports = {
