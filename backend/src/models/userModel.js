@@ -25,7 +25,7 @@ const findUserByEmail = async (email) => {
 };
 const findUserById = async (id) => {
   const result = await pool.query(
-    "SELECT id, username, email, created_at FROM users WHERE id = $1",
+    "SELECT id, username, email, role, created_at FROM users WHERE id = $1",
     [id]
   );
 

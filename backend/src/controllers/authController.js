@@ -59,26 +59,28 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-  {
-    id: user.id,
-    email: user.email,
-  },
-  process.env.JWT_SECRET,
-  {
-    expiresIn: "7d",
-  }
-);
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
-res.status(200).json({
-  success: true,
-  message: "Login successful",
-  token,
-  user: {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-  },
-});
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
     console.error(error);
 
@@ -88,30 +90,30 @@ res.status(200).json({
     });
   }
 };
-  const getCurrentUserHandler = async (req, res) => {
-    try {
-      const user = await findUserById(req.user.id);
+const getCurrentUserHandler = async (req, res) => {
+  try {
+    const user = await findUserById(req.user.id);
 
-      if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: "User not found",
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-        user,
-      });
-    } catch (error) {
-      console.error(error);
-
-      return res.status(500).json({
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        message: error.message,
+        message: "User not found",
       });
     }
-  };
+
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 module.exports = {
     register,login,getCurrentUserHandler,
 };

@@ -4,6 +4,9 @@ const router = express.Router();
 const authMiddleware = require(
   "../middleware/authMiddleware"
 );
+const adminMiddleware = require(
+  "../middleware/adminMiddleware"
+);
 
 const {
   createProblemHandler,getAllProblemsHandler, getProblemByIdHandler,
@@ -22,11 +25,13 @@ router.get(
 router.post(
   "/",
   authMiddleware,
+  adminMiddleware,
   createProblemHandler
 );
 router.post(
   "/:id/testcases",
   authMiddleware,
+  adminMiddleware,
   createTestCaseHandler
 );
 
