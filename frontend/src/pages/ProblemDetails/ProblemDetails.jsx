@@ -30,18 +30,18 @@ function getDifficultyBadgeClasses(difficulty) {
   const normalizedDifficulty = String(difficulty ?? "").toLowerCase();
 
   if (normalizedDifficulty === "easy") {
-    return "bg-green-100 text-green-800";
+    return "border border-signal text-signal font-display uppercase tracking-wider";
   }
 
   if (normalizedDifficulty === "medium") {
-    return "bg-amber-100 text-amber-800";
+    return "border border-pending text-pending font-display uppercase tracking-wider";
   }
 
   if (normalizedDifficulty === "hard") {
-    return "bg-red-100 text-red-800";
+    return "border border-reject text-reject font-display uppercase tracking-wider";
   }
 
-  return "bg-slate-100 text-slate-700";
+  return "border border-paper/30 text-paper/60 font-display uppercase tracking-wider";
 }
 
 function ProblemDetails() {
@@ -264,14 +264,14 @@ function ProblemDetails() {
     const normalizedVerdict = String(verdict ?? "").toLowerCase();
 
     if (normalizedVerdict === "pending") {
-      return "bg-slate-100 text-slate-700";
+      return "border border-paper/30 text-paper/60 font-display uppercase tracking-wider";
     }
 
     if (normalizedVerdict === "accepted") {
-      return "bg-green-100 text-green-800";
+      return "border border-signal text-signal font-display uppercase tracking-wider";
     }
 
-    return "bg-red-100 text-red-800";
+    return "border border-reject text-reject font-display uppercase tracking-wider";
   };
 
   return (
@@ -286,7 +286,7 @@ function ProblemDetails() {
           </div>
 
           <span
-            className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-medium ${getDifficultyBadgeClasses(difficulty)}`}
+            className={`inline-flex w-fit rounded-md px-3 py-1 text-xs font-semibold ${getDifficultyBadgeClasses(difficulty)}`}
           >
             {difficulty}
           </span>
@@ -421,10 +421,10 @@ function ProblemDetails() {
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <span
-                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${verdictBadgeClasses(submission.verdict)}`}
+                    className={`inline-flex items-center rounded-md px-3 py-1 text-xs font-semibold ${verdictBadgeClasses(submission.verdict)}`}
                   >
                     {submission.verdict === "pending" ? (
-                      <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-slate-500" />
+                      <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-pending" />
                     ) : null}
                     {submission.verdict === "pending"
                       ? "Judging..."

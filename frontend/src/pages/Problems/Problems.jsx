@@ -6,18 +6,18 @@ function getDifficultyBadgeClasses(difficulty) {
   const normalizedDifficulty = String(difficulty ?? "").toLowerCase();
 
   if (normalizedDifficulty === "easy") {
-    return "bg-green-100 text-green-800";
+    return "border border-signal text-signal font-display uppercase tracking-wider";
   }
 
   if (normalizedDifficulty === "medium") {
-    return "bg-amber-100 text-amber-800";
+    return "border border-pending text-pending font-display uppercase tracking-wider";
   }
 
   if (normalizedDifficulty === "hard") {
-    return "bg-red-100 text-red-800";
+    return "border border-reject text-reject font-display uppercase tracking-wider";
   }
 
-  return "bg-slate-100 text-slate-700";
+  return "border border-paper/30 text-paper/60 font-display uppercase tracking-wider";
 }
 
 function Problems() {
@@ -180,7 +180,7 @@ function Problems() {
                       </td>
                       <td className="px-4 py-4 text-sm text-paper/80">
                         <span
-                          className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getDifficultyBadgeClasses(problemDifficulty)}`}
+                          className={`inline-flex rounded-md px-3 py-1 text-xs font-semibold ${getDifficultyBadgeClasses(problemDifficulty)}`}
                         >
                           {problemDifficulty}
                         </span>

@@ -6,14 +6,14 @@ function getVerdictBadgeClasses(verdict) {
   const normalizedVerdict = String(verdict ?? "").toLowerCase();
 
   if (normalizedVerdict === "pending") {
-    return "bg-slate-100 text-slate-700";
+    return "border border-paper/30 text-paper/60 font-display uppercase tracking-wider";
   }
 
   if (normalizedVerdict === "accepted") {
-    return "bg-green-100 text-green-800";
+    return "border border-signal text-signal font-display uppercase tracking-wider";
   }
 
-  return "bg-red-100 text-red-800";
+  return "border border-reject text-reject font-display uppercase tracking-wider";
 }
 
 function formatSubmittedAt(value) {
@@ -155,10 +155,10 @@ function AdminSubmissions() {
                     </td>
                     <td className="px-4 py-4 text-sm text-paper/80">
                       <span
-                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${getVerdictBadgeClasses(submission?.verdict)}`}
+                        className={`inline-flex items-center rounded-md px-3 py-1 text-xs font-semibold ${getVerdictBadgeClasses(submission?.verdict)}`}
                       >
                         {submission?.verdict === "pending" ? (
-                          <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-slate-500" />
+                          <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-pending" />
                         ) : null}
                         {submission?.verdict === "pending"
                           ? "Judging..."

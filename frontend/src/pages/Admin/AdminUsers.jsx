@@ -5,10 +5,10 @@ function getRoleBadgeClasses(role) {
   const normalizedRole = String(role ?? "").toLowerCase();
 
   if (normalizedRole === "admin") {
-    return "bg-indigo-100 text-indigo-800";
+    return "border border-signal text-signal font-display uppercase tracking-wider";
   }
 
-    return "bg-slate-100 text-slate-700";
+  return "border border-paper/30 text-paper/60 font-display uppercase tracking-wider";
 }
 
 function formatCreatedAt(value) {
@@ -125,7 +125,7 @@ function AdminUsers() {
                     </td>
                     <td className="px-4 py-4 text-sm text-paper/80">
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getRoleBadgeClasses(
+                        className={`inline-flex rounded-md px-3 py-1 text-xs font-semibold ${getRoleBadgeClasses(
                           user?.role
                         )}`}
                       >
