@@ -44,7 +44,7 @@ function AdminDashboard() {
   }, []);
 
   if (loading) {
-    return <p className="text-sm text-slate-600">Loading admin dashboard...</p>;
+    return <p className="text-sm text-paper/60">Loading admin dashboard...</p>;
   }
 
   if (error) {
@@ -52,7 +52,7 @@ function AdminDashboard() {
   }
 
   if (!stats) {
-    return <p className="text-sm text-slate-600">Failed to load admin dashboard.</p>;
+    return <p className="text-sm text-paper/60">Failed to load admin dashboard.</p>;
   }
 
   const statCards = [
@@ -77,8 +77,8 @@ function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">Admin Dashboard</h1>
-        <p className="mt-2 text-sm text-slate-600">
+        <h1 className="text-2xl font-semibold text-paper">Admin Dashboard</h1>
+        <p className="mt-2 text-sm text-paper/60">
           Overview of platform activity and admin tools.
         </p>
       </div>
@@ -87,10 +87,10 @@ function AdminDashboard() {
         {statCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm"
+            className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-sm"
           >
-            <p className="text-sm font-medium text-slate-600">{card.label}</p>
-            <p className="mt-3 text-3xl font-semibold text-slate-900">
+            <p className="text-sm font-medium text-paper/60">{card.label}</p>
+            <p className="mt-3 text-3xl font-semibold text-paper">
               {card.value ?? 0}
             </p>
           </div>

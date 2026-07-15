@@ -70,8 +70,8 @@ function Profile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-slate-600">Loading profile...</p>
+        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
+          <p className="text-sm text-paper/60">Loading profile...</p>
         </div>
       </div>
     );
@@ -80,7 +80,7 @@ function Profile() {
   if (error) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
+        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
           <p className="text-sm text-red-600">{error}</p>
         </div>
       </div>
@@ -90,8 +90,8 @@ function Profile() {
   if (!user) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-slate-600">Failed to load profile.</p>
+        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
+          <p className="text-sm text-paper/60">Failed to load profile.</p>
         </div>
       </div>
     );
@@ -99,11 +99,11 @@ function Profile() {
 
   return (
     <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
+      <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
         <div className="space-y-3">
-          <h1 className="text-2xl font-semibold text-slate-900">{user.username}</h1>
-          <p className="text-sm text-slate-600">{user.email}</p>
-          <p className="text-xs text-slate-500">
+          <h1 className="text-2xl font-semibold text-paper">{user.username}</h1>
+          <p className="text-sm text-paper/60">{user.email}</p>
+          <p className="text-xs text-paper/40">
             Total Submissions: {totalSubmissions} · Accepted: {acceptedCount} · Problems Solved: {uniqueProblemsSolved}
           </p>
         </div>

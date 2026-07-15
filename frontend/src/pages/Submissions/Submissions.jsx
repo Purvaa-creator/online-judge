@@ -76,14 +76,14 @@ function Submissions() {
 
   return (
     <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-6xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
+      <div className="mx-auto w-full max-w-6xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold text-slate-900">My Submissions</h1>
-          <p className="text-sm text-slate-600">Review the submissions created from your account.</p>
+          <h1 className="text-2xl font-semibold text-paper">My Submissions</h1>
+          <p className="text-sm text-paper/60">Review the submissions created from your account.</p>
         </div>
 
         {loading ? (
-          <div className="mt-8 rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+          <div className="mt-8 rounded-lg border border-white/10 bg-white/5 px-4 py-6 text-sm text-paper/60">
             Loading submissions...
           </div>
         ) : error ? (
@@ -91,38 +91,38 @@ function Submissions() {
             {error}
           </div>
         ) : rows.length === 0 ? (
-          <div className="mt-8 rounded-lg border border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+          <div className="mt-8 rounded-lg border border-white/10 bg-white/5 px-4 py-6 text-sm text-paper/60">
             No submissions yet.
           </div>
         ) : (
-          <div className="mt-8 overflow-x-auto rounded-xl border border-slate-200">
-            <table className="min-w-full divide-y divide-slate-200">
-              <thead className="bg-slate-50">
+          <div className="mt-8 overflow-x-auto rounded-xl border border-white/10">
+            <table className="min-w-full divide-y divide-white/10">
+              <thead className="bg-white/5">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
                     ID
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
                     Problem ID
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
                     Language
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
                     Verdict
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
                     Execution Time
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
                     Memory Used
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
                     Submitted At
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 bg-white">
+              <tbody className="divide-y divide-white/10 bg-white/5">
                 {rows.map((submission) => {
                   const submissionId = submission?.id ?? "";
                   const problemId = submission?.problem_id ?? "-";
@@ -137,15 +137,15 @@ function Submissions() {
                   return (
                     <tr
                       key={submissionId}
-                      className="cursor-pointer transition hover:bg-slate-50"
+                      className="cursor-pointer transition hover:bg-white/10"
                       onClick={() => navigate(`/problems/${problemId}`)}
                     >
-                      <td className="px-4 py-4 text-sm text-slate-700">{submissionId}</td>
-                      <td className="px-4 py-4 text-sm text-slate-700">{problemId}</td>
-                      <td className="px-4 py-4 text-sm capitalize text-slate-700">
+                      <td className="px-4 py-4 text-sm text-paper/80">{submissionId}</td>
+                      <td className="px-4 py-4 text-sm text-paper/80">{problemId}</td>
+                      <td className="px-4 py-4 text-sm capitalize text-paper/80">
                         {submission?.language ?? "-"}
                       </td>
-                      <td className="px-4 py-4 text-sm text-slate-700">
+                      <td className="px-4 py-4 text-sm text-paper/80">
                         <span
                           className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${getVerdictBadgeClasses(submission?.verdict)}`}
                         >
@@ -157,9 +157,9 @@ function Submissions() {
                             : submission?.verdict ?? "-"}
                         </span>
                       </td>
-                      <td className="px-4 py-4 text-sm text-slate-700">{executionTime}</td>
-                      <td className="px-4 py-4 text-sm text-slate-700">{memoryUsed}</td>
-                      <td className="px-4 py-4 text-sm text-slate-700">{submittedAt}</td>
+                      <td className="px-4 py-4 text-sm text-paper/80">{executionTime}</td>
+                      <td className="px-4 py-4 text-sm text-paper/80">{memoryUsed}</td>
+                      <td className="px-4 py-4 text-sm text-paper/80">{submittedAt}</td>
                     </tr>
                   );
                 })}

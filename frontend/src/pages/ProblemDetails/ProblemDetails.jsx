@@ -124,8 +124,8 @@ function ProblemDetails() {
   if (loading) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-slate-600">Loading problem...</p>
+        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
+          <p className="text-sm text-paper/60">Loading problem...</p>
         </div>
       </div>
     );
@@ -134,7 +134,7 @@ function ProblemDetails() {
   if (error) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
+        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
           <p className="text-sm text-red-600">{error}</p>
         </div>
       </div>
@@ -144,8 +144,8 @@ function ProblemDetails() {
   if (!problem) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-slate-600">Failed to load problem.</p>
+        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
+          <p className="text-sm text-paper/60">Failed to load problem.</p>
         </div>
       </div>
     );
@@ -276,11 +276,11 @@ function ProblemDetails() {
 
   return (
     <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
+      <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900">{title}</h1>
-            <p className="mt-2 text-sm text-slate-600">
+            <h1 className="text-2xl font-semibold text-paper">{title}</h1>
+            <p className="mt-2 text-sm text-paper/60">
               Time Limit: {timeLimitMs ?? "-"} ms · Memory Limit: {memoryLimitKb ?? "-"} KB
             </p>
           </div>
@@ -292,22 +292,22 @@ function ProblemDetails() {
           </span>
         </div>
 
-        <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700 sm:p-6">
+        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-paper/80 sm:p-6">
           <div className="whitespace-pre-wrap">{description}</div>
         </div>
 
-        <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="language">
+                <label className="mb-1 block text-sm font-medium text-paper/80" htmlFor="language">
                   Language
                 </label>
                 <select
                   id="language"
                   value={language}
                   onChange={handleLanguageChange}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-paper outline-none transition focus:border-signal focus:ring-2 focus:ring-signal/20"
                 >
                   <option value="cpp">C++</option>
                   <option value="python">Python</option>
@@ -317,14 +317,14 @@ function ProblemDetails() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="theme">
+                <label className="mb-1 block text-sm font-medium text-paper/80" htmlFor="theme">
                   Theme
                 </label>
                 <select
                   id="theme"
                   value={theme}
                   onChange={handleThemeChange}
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-paper outline-none transition focus:border-signal focus:ring-2 focus:ring-signal/20"
                 >
                   <option value="vs-dark">Dark</option>
                   <option value="light">Light</option>
@@ -333,7 +333,7 @@ function ProblemDetails() {
             </div>
           </div>
 
-          <div className="mt-4 overflow-hidden rounded-xl border border-slate-200">
+          <div className="mt-4 overflow-hidden rounded-xl border border-white/10">
             <Editor
               height="500px"
               language={language}
@@ -349,7 +349,7 @@ function ProblemDetails() {
           </div>
 
           <div className="mt-4">
-            <label className="mb-1 block text-sm font-medium text-slate-700" htmlFor="customInput">
+            <label className="mb-1 block text-sm font-medium text-paper/80" htmlFor="customInput">
               Custom Input
             </label>
             <textarea
@@ -358,7 +358,7 @@ function ProblemDetails() {
               value={customInput}
               onChange={(event) => setCustomInput(event.target.value)}
               placeholder="Enter custom input here"
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-paper outline-none transition placeholder:text-paper/40 focus:border-signal focus:ring-2 focus:ring-signal/20"
             />
           </div>
 
@@ -368,7 +368,7 @@ function ProblemDetails() {
                 type="button"
                 onClick={handleRun}
                 disabled={running}
-                className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+                className="rounded-lg bg-signal px-4 py-2 text-sm font-medium text-ink transition hover:bg-signal-dark disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {running ? "Running..." : "Run"}
               </button>
@@ -377,7 +377,7 @@ function ProblemDetails() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="rounded-lg bg-slate-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-70"
+                className="rounded-lg border border-signal bg-transparent px-4 py-2 text-sm font-medium text-signal transition hover:bg-signal/10 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {submitting
                   ? submission?.verdict === "pending"
@@ -388,23 +388,23 @@ function ProblemDetails() {
             </div>
 
             {executionTime !== null ? (
-              <p className="text-xs text-slate-500">Executed in {executionTime} ms</p>
+              <p className="text-xs text-paper/40">Executed in {executionTime} ms</p>
             ) : null}
           </div>
 
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <p className="mb-2 text-sm font-medium text-slate-700">Output</p>
+          <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
+            <p className="mb-2 text-sm font-medium text-paper/80">Output</p>
 
             {runError ? (
               <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
                 {runError}
               </div>
             ) : output ? (
-              <pre className="overflow-x-auto rounded-lg bg-slate-900 px-4 py-3 font-mono text-sm text-slate-100 whitespace-pre-wrap">
+              <pre className="overflow-x-auto rounded-lg bg-slate-900 px-4 py-3 font-mono text-sm text-paper whitespace-pre-wrap">
                 {output}
               </pre>
             ) : (
-              <div className="rounded-lg border border-dashed border-slate-300 px-3 py-4 text-sm text-slate-500">
+              <div className="rounded-lg border border-dashed border-white/10 px-3 py-4 text-sm text-paper/40">
                 Run your code to see output here
               </div>
             )}
@@ -415,8 +415,8 @@ function ProblemDetails() {
               {submitError}
             </div>
           ) : submission ? (
-            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <p className="mb-2 text-sm font-medium text-slate-700">Verdict</p>
+            <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
+              <p className="mb-2 text-sm font-medium text-paper/80">Verdict</p>
 
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
@@ -434,11 +434,11 @@ function ProblemDetails() {
                   </span>
 
                   {submission.verdict === "pending" ? (
-                    <span className="text-xs text-slate-500">Polling every 2 seconds</span>
+                    <span className="text-xs text-paper/40">Polling every 2 seconds</span>
                   ) : null}
                 </div>
 
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-paper/40">
                   {submission.execution_time_ms != null ? (
                     <span>Execution Time: {submission.execution_time_ms} ms</span>
                   ) : null}
