@@ -82,7 +82,7 @@ function Problems() {
   }, [difficultyFilter, problems, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-6xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold text-slate-900">Problems</h1>

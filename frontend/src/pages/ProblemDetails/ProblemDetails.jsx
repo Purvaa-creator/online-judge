@@ -123,7 +123,7 @@ function ProblemDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
           <p className="text-sm text-slate-600">Loading problem...</p>
         </div>
@@ -133,7 +133,7 @@ function ProblemDetails() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
           <p className="text-sm text-red-600">{error}</p>
         </div>
@@ -143,7 +143,7 @@ function ProblemDetails() {
 
   if (!problem) {
     return (
-      <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
           <p className="text-sm text-slate-600">Failed to load problem.</p>
         </div>
@@ -275,7 +275,7 @@ function ProblemDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-10 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
