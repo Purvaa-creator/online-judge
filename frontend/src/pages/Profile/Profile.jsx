@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Card, EmptyState, ErrorState, Spinner } from "../../components/ui/SharedComponents.jsx";
 import { getCurrentUser } from "../../services/authService.js";
 import { getMySubmissions } from "../../services/submissionService.js";
 
@@ -70,9 +71,10 @@ function Profile() {
   if (loading) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-paper/60">Loading profile...</p>
-        </div>
+        <Card className="mx-auto flex w-full max-w-4xl items-center justify-center gap-3 p-6 shadow-card sm:p-8">
+          <Spinner />
+          <span className="text-sm text-text-secondary">Loading profile...</span>
+        </Card>
       </div>
     );
   }
@@ -80,9 +82,9 @@ function Profile() {
   if (error) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
+        <Card className="mx-auto w-full max-w-4xl p-6 shadow-card sm:p-8">
+          <ErrorState message={error} onRetry={() => window.location.reload()} />
+        </Card>
       </div>
     );
   }
@@ -90,24 +92,35 @@ function Profile() {
   if (!user) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-paper/60">Failed to load profile.</p>
-        </div>
+        <Card className="mx-auto w-full max-w-4xl p-6 shadow-card sm:p-8">
+          <EmptyState message="No profile data available right now." />
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
+      <Card className="mx-auto w-full max-w-4xl p-6 shadow-card sm:p-8">
         <div className="space-y-3">
-          <h1 className="text-2xl font-semibold text-paper">{user.username}</h1>
-          <p className="text-sm text-paper/60">{user.email}</p>
-          <p className="text-xs text-paper/40">
-            Total Submissions: {totalSubmissions} · Accepted: {acceptedCount} · Problems Solved: {uniqueProblemsSolved}
-          </p>
+          <h1 className="text-2xl font-semibold text-text-primary">{user.username}</h1>
+          <p className="text-sm text-text-secondary">{user.email}</p>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-border-subtle/80 bg-bg-surface/70 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-text-secondary">Total Submissions</p>
+              <p className="mt-2 text-2xl font-semibold text-text-primary">{totalSubmissions}</p>
+            </div>
+            <div className="rounded-2xl border border-border-subtle/80 bg-bg-surface/70 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-text-secondary">Accepted</p>
+              <p className="mt-2 text-2xl font-semibold text-verdict-accepted">{acceptedCount}</p>
+            </div>
+            <div className="rounded-2xl border border-border-subtle/80 bg-bg-surface/70 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-text-secondary">Problems Solved</p>
+              <p className="mt-2 text-2xl font-semibold text-accent-primary">{uniqueProblemsSolved}</p>
+            </div>
+          </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

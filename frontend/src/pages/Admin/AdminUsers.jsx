@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Card, EmptyState, ErrorState, Spinner } from "../../components/ui/SharedComponents.jsx";
 import { getAllUsers } from "../../services/adminService.js";
 
 function getRoleBadgeClasses(role) {
@@ -69,45 +70,32 @@ function AdminUsers() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold text-paper">Users</h1>
-        <p className="text-sm text-paper/60">View all registered accounts.</p>
+        <h1 className="text-2xl font-semibold text-text-primary">Users</h1>
+        <p className="text-sm text-text-secondary">View all registered accounts.</p>
       </div>
 
       {loading ? (
-        <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-6 text-sm text-paper/60">
-          Loading users...
+        <div className="flex items-center justify-center gap-3 rounded-2xl border border-border-subtle/80 bg-bg-surface/70 px-4 py-6 text-sm text-text-secondary">
+          <Spinner />
+          <span>Loading users...</span>
         </div>
       ) : error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-6 text-sm text-red-700">
-          {error}
-        </div>
+        <ErrorState message={error} onRetry={() => window.location.reload()} />
       ) : users.length === 0 ? (
-        <div className="rounded-lg border border-white/10 bg-white/5 px-4 py-6 text-sm text-paper/60">
-          No users found.
-        </div>
+        <EmptyState message="No users found." />
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-white/10">
-          <table className="min-w-full divide-y divide-white/10">
-            <thead className="bg-white/5">
+        <div className="overflow-x-auto rounded-xl border border-border-subtle/80">
+          <table className="min-w-full divide-y divide-border-subtle/80">
+            <thead className="bg-bg-surface-hover/80">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                  ID
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                  Username
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                  Email
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                  Role
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                  Created At
-                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">ID</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Username</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Email</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Role</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Created At</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/10 bg-white/5">
+            <tbody className="divide-y divide-border-subtle/80 bg-bg-surface/70">
               {users.map((user) => {
                 const userId = user?.id ?? "";
                 const createdAt = formatCreatedAt(
@@ -115,15 +103,15 @@ function AdminUsers() {
                 );
 
                 return (
-                  <tr key={userId} className="transition hover:bg-white/10">
-                    <td className="px-4 py-4 text-sm text-paper/80">{userId}</td>
-                    <td className="px-4 py-4 text-sm font-medium text-paper">
+                  <tr key={userId} className="transition hover:bg-bg-surface-hover/70">
+                    <td className="px-4 py-4 text-sm text-text-secondary">{userId}</td>
+                    <td className="px-4 py-4 text-sm font-medium text-text-primary">
                       {user?.username ?? "-"}
                     </td>
-                    <td className="px-4 py-4 text-sm text-paper/80">
+                    <td className="px-4 py-4 text-sm text-text-secondary">
                       {user?.email ?? "-"}
                     </td>
-                    <td className="px-4 py-4 text-sm text-paper/80">
+                    <td className="px-4 py-4 text-sm text-text-secondary">
                       <span
                         className={`inline-flex rounded-md px-3 py-1 text-xs font-semibold ${getRoleBadgeClasses(
                           user?.role
@@ -132,7 +120,7 @@ function AdminUsers() {
                         {user?.role ?? "user"}
                       </span>
                     </td>
-                    <td className="px-4 py-4 text-sm text-paper/80">{createdAt}</td>
+                    <td className="px-4 py-4 text-sm text-text-secondary">{createdAt}</td>
                   </tr>
                 );
               })}

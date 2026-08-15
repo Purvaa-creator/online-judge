@@ -1,13 +1,17 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../stores/AuthContext.jsx";
+import { Card, Spinner } from "../ui/SharedComponents.jsx";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, hydrating } = useAuth();
 
   if (hydrating) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p>Loading...</p>
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <Card className="flex items-center gap-3 px-6 py-4 text-text-secondary">
+          <Spinner />
+          <span>Preparing your workspace...</span>
+        </Card>
       </div>
     );
   }

@@ -22,14 +22,14 @@ function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-6xl rounded-2xl border border-white/10 bg-white/5 shadow-lg">
-        <div className="border-b border-white/10 px-6 pt-6 sm:px-8">
-          <nav className="-mb-px flex flex-wrap gap-2 overflow-x-auto text-sm font-medium text-paper/60">
+      <div className="mx-auto w-full max-w-6xl rounded-2xl border border-border-subtle/80 bg-bg-surface/90 shadow-card">
+        <div className="border-b border-border-subtle/80 px-6 pt-6 sm:px-8">
+          <nav className="-mb-px flex flex-wrap gap-2 overflow-x-auto text-sm font-medium text-text-secondary">
             {tabs.map((tab) => (
               <Link
                 key={tab.to}
                 to={tab.to}
-                className="rounded-t-xl border-b-2 border-transparent px-4 py-3 transition-colors hover:border-signal hover:text-signal"
+                className="rounded-t-xl border-b-2 border-transparent px-4 py-3 transition-colors hover:border-accent-primary hover:text-accent-primary"
               >
                 {tab.label}
               </Link>

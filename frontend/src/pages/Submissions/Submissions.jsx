@@ -1,20 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Badge, Card, EmptyState, ErrorState, Spinner } from "../../components/ui/SharedComponents.jsx";
 import { getMySubmissions } from "../../services/submissionService.js";
-
-function getVerdictBadgeClasses(verdict) {
-  const normalizedVerdict = String(verdict ?? "").toLowerCase();
-
-  if (normalizedVerdict === "pending") {
-    return "border border-paper/30 text-paper/60 font-display uppercase tracking-wider";
-  }
-
-  if (normalizedVerdict === "accepted") {
-    return "border border-signal text-signal font-display uppercase tracking-wider";
-  }
-
-  return "border border-reject text-reject font-display uppercase tracking-wider";
-}
 
 function formatSubmittedAt(value) {
   if (!value) {
@@ -76,53 +63,40 @@ function Submissions() {
 
   return (
     <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-6xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
+      <Card className="mx-auto w-full max-w-6xl p-6 shadow-card sm:p-8">
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold text-paper">My Submissions</h1>
-          <p className="text-sm text-paper/60">Review the submissions created from your account.</p>
+          <h1 className="text-2xl font-semibold text-text-primary">My Submissions</h1>
+          <p className="text-sm text-text-secondary">Review the submissions created from your account.</p>
         </div>
 
         {loading ? (
-          <div className="mt-8 rounded-lg border border-white/10 bg-white/5 px-4 py-6 text-sm text-paper/60">
-            Loading submissions...
+          <div className="mt-8 flex items-center justify-center gap-3 rounded-2xl border border-border-subtle/80 bg-bg-surface/70 px-4 py-6 text-sm text-text-secondary">
+            <Spinner />
+            <span>Loading submissions...</span>
           </div>
         ) : error ? (
-          <div className="mt-8 rounded-lg border border-red-200 bg-red-50 px-4 py-6 text-sm text-red-700">
-            {error}
+          <div className="mt-8">
+            <ErrorState message={error} onRetry={() => window.location.reload()} />
           </div>
         ) : rows.length === 0 ? (
-          <div className="mt-8 rounded-lg border border-white/10 bg-white/5 px-4 py-6 text-sm text-paper/60">
-            No submissions yet.
+          <div className="mt-8">
+            <EmptyState message="No submissions yet — try solving a problem." />
           </div>
         ) : (
-          <div className="mt-8 overflow-x-auto rounded-xl border border-white/10">
-            <table className="min-w-full divide-y divide-white/10">
-              <thead className="bg-white/5">
+          <div className="mt-8 overflow-x-auto rounded-xl border border-border-subtle/80">
+            <table className="min-w-full divide-y divide-border-subtle/80">
+              <thead className="bg-bg-surface-hover/80">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                    ID
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                    Problem ID
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                    Language
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                    Verdict
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                    Execution Time
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                    Memory Used
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-paper/40">
-                    Submitted At
-                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Problem ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Language</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Verdict</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Execution Time</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Memory Used</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-text-secondary">Submitted At</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10 bg-white/5">
+              <tbody className="divide-y divide-border-subtle/80 bg-bg-surface/70">
                 {rows.map((submission) => {
                   const submissionId = submission?.id ?? "";
                   const problemId = submission?.problem_id ?? "-";
@@ -137,29 +111,18 @@ function Submissions() {
                   return (
                     <tr
                       key={submissionId}
-                      className="cursor-pointer transition hover:bg-white/10"
+                      className="cursor-pointer transition hover:bg-bg-surface-hover/70"
                       onClick={() => navigate(`/problems/${problemId}`)}
                     >
-                      <td className="px-4 py-4 text-sm text-paper/80">{submissionId}</td>
-                      <td className="px-4 py-4 text-sm text-paper/80">{problemId}</td>
-                      <td className="px-4 py-4 text-sm capitalize text-paper/80">
-                        {submission?.language ?? "-"}
+                      <td className="px-4 py-4 text-sm text-text-secondary">{submissionId}</td>
+                      <td className="px-4 py-4 text-sm text-text-secondary">{problemId}</td>
+                      <td className="px-4 py-4 text-sm capitalize text-text-secondary">{submission?.language ?? "-"}</td>
+                      <td className="px-4 py-4 text-sm text-text-secondary">
+                        <Badge value={submission?.verdict ?? "-"} variant="verdict" />
                       </td>
-                      <td className="px-4 py-4 text-sm text-paper/80">
-                        <span
-                          className={`inline-flex items-center rounded-md px-3 py-1 text-xs font-semibold ${getVerdictBadgeClasses(submission?.verdict)}`}
-                        >
-                          {submission?.verdict === "pending" ? (
-                            <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-pending" />
-                          ) : null}
-                          {submission?.verdict === "pending"
-                            ? "Judging..."
-                            : submission?.verdict ?? "-"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-paper/80">{executionTime}</td>
-                      <td className="px-4 py-4 text-sm text-paper/80">{memoryUsed}</td>
-                      <td className="px-4 py-4 text-sm text-paper/80">{submittedAt}</td>
+                      <td className="px-4 py-4 text-sm text-text-secondary">{executionTime}</td>
+                      <td className="px-4 py-4 text-sm text-text-secondary">{memoryUsed}</td>
+                      <td className="px-4 py-4 text-sm text-text-secondary">{submittedAt}</td>
                     </tr>
                   );
                 })}
@@ -167,7 +130,7 @@ function Submissions() {
             </table>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

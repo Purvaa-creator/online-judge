@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Card, Input, Spinner } from "../../components/ui/SharedComponents.jsx";
 import { login } from "../../services/authService.js";
 import { useAuth } from "../../stores/AuthContext.jsx";
 
@@ -39,63 +40,59 @@ function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-transparent px-4">
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 shadow-lg">
-        <h1 className="text-2xl font-semibold text-paper">Login</h1>
-        <p className="mt-2 text-sm text-paper/60">
+    <div className="flex min-h-screen items-center justify-center bg-transparent px-4 py-10">
+      <Card className="w-full max-w-md p-8 shadow-card">
+        <h1 className="text-2xl font-semibold text-text-primary">Login</h1>
+        <p className="mt-2 text-sm text-text-secondary">
           Sign in to continue to the platform.
         </p>
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="mb-1 block text-sm font-medium text-paper/80" htmlFor="email">
+            <label className="mb-1 block text-sm font-medium text-text-primary" htmlFor="email">
               Email
             </label>
-            <input
+            <Input
               id="email"
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-paper outline-none transition focus:border-signal focus:ring-2 focus:ring-signal/20"
               required
             />
           </div>
 
           <div>
-            <label
-              className="mb-1 block text-sm font-medium text-paper/80"
-              htmlFor="password"
-            >
+            <label className="mb-1 block text-sm font-medium text-text-primary" htmlFor="password">
               Password
             </label>
-            <input
+            <Input
               id="password"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-paper outline-none transition focus:border-signal focus:ring-2 focus:ring-signal/20"
               required
             />
           </div>
 
-          {error ? <p className="text-sm text-red-600">{error}</p> : null}
+          {error ? <p className="text-sm text-verdict-wrong">{error}</p> : null}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-signal px-4 py-2 text-sm font-medium text-ink transition hover:bg-signal-dark disabled:cursor-not-allowed disabled:opacity-70"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent-primary px-4 py-2.5 text-sm font-medium text-white transition hover:bg-accent-primary-hover disabled:cursor-not-allowed disabled:opacity-70"
           >
+            {loading ? <Spinner className="border-white/25 border-t-white" /> : null}
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-paper/60">
+        <p className="mt-4 text-sm text-text-secondary">
           Don&apos;t have an account?{" "}
-          <Link className="font-medium text-paper underline underline-offset-4" to="/register">
+          <Link className="font-medium text-text-primary underline underline-offset-4" to="/register">
             Register
           </Link>
         </p>
-      </div>
+      </Card>
     </div>
   );
 }

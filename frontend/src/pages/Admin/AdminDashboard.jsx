@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Card, EmptyState, ErrorState, Spinner } from "../../components/ui/SharedComponents.jsx";
 import { getStats } from "../../services/adminService.js";
 
 function AdminDashboard() {
@@ -44,15 +45,20 @@ function AdminDashboard() {
   }, []);
 
   if (loading) {
-    return <p className="text-sm text-paper/60">Loading admin dashboard...</p>;
+    return (
+      <div className="flex items-center justify-center gap-3 rounded-2xl border border-border-subtle/80 bg-bg-surface/70 px-4 py-8 text-sm text-text-secondary">
+        <Spinner />
+        <span>Loading admin dashboard...</span>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-sm text-red-600">{error}</p>;
+    return <ErrorState message={error} onRetry={() => window.location.reload()} />;
   }
 
   if (!stats) {
-    return <p className="text-sm text-paper/60">Failed to load admin dashboard.</p>;
+    return <EmptyState message="No admin dashboard data is available right now." />;
   }
 
   const statCards = [
@@ -77,23 +83,20 @@ function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-paper">Admin Dashboard</h1>
-        <p className="mt-2 text-sm text-paper/60">
+        <h1 className="text-2xl font-semibold text-text-primary">Admin Dashboard</h1>
+        <p className="mt-2 text-sm text-text-secondary">
           Overview of platform activity and admin tools.
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((card) => (
-          <div
-            key={card.label}
-            className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-sm"
-          >
-            <p className="text-sm font-medium text-paper/60">{card.label}</p>
-            <p className="mt-3 text-3xl font-semibold text-paper">
+          <Card key={card.label} className="p-5">
+            <p className="text-sm font-medium text-text-secondary">{card.label}</p>
+            <p className="mt-3 text-3xl font-semibold text-text-primary">
               {card.value ?? 0}
             </p>
-          </div>
+          </Card>
         ))}
       </div>
     </div>

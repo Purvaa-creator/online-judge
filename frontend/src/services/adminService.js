@@ -39,3 +39,18 @@ export async function createProblem(title, description, difficulty) {
 
   return response.data.problem;
 }
+
+export async function getTestCases(problemId) {
+  const response = await apiClient.get(`/problems/${problemId}/testcases`);
+  return response.data.testCases;
+}
+
+export async function createTestCase(problemId, input, expectedOutput, isSample) {
+  const response = await apiClient.post(`/problems/${problemId}/testcases`, {
+    input,
+    expectedOutput,
+    isSample,
+  });
+
+  return response.data.testCase;
+}

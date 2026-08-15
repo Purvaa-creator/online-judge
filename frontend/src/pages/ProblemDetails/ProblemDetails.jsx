@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { useParams } from "react-router-dom";
+import { Badge, Card, EmptyState, ErrorState, Input, Select, Spinner } from "../../components/ui/SharedComponents.jsx";
 import { getProblemById } from "../../services/problemService.js";
 import { executeCode } from "../../services/executeService.js";
 import {
@@ -26,22 +27,12 @@ int main() {
 }`,
 };
 
-function getDifficultyBadgeClasses(difficulty) {
-  const normalizedDifficulty = String(difficulty ?? "").toLowerCase();
-
-  if (normalizedDifficulty === "easy") {
-    return "border border-signal text-signal font-display uppercase tracking-wider";
+function getThemePreference() {
+  if (typeof window === "undefined") {
+    return "vs-dark";
   }
 
-  if (normalizedDifficulty === "medium") {
-    return "border border-pending text-pending font-display uppercase tracking-wider";
-  }
-
-  if (normalizedDifficulty === "hard") {
-    return "border border-reject text-reject font-display uppercase tracking-wider";
-  }
-
-  return "border border-paper/30 text-paper/60 font-display uppercase tracking-wider";
+  return window.localStorage.getItem("editor-theme") ?? "vs-dark";
 }
 
 function ProblemDetails() {
@@ -49,7 +40,7 @@ function ProblemDetails() {
   const [problem, setProblem] = useState(null);
   const [language, setLanguage] = useState("cpp");
   const [code, setCode] = useState(starterTemplates.cpp);
-  const [theme, setTheme] = useState("vs-dark");
+  const [theme, setTheme] = useState(getThemePreference());
   const [customInput, setCustomInput] = useState("");
   const [output, setOutput] = useState("");
   const [running, setRunning] = useState(false);
@@ -124,9 +115,10 @@ function ProblemDetails() {
   if (loading) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-paper/60">Loading problem...</p>
-        </div>
+        <Card className="mx-auto flex w-full max-w-4xl items-center justify-center gap-3 p-6 shadow-card sm:p-8">
+          <Spinner />
+          <span className="text-sm text-text-secondary">Loading problem...</span>
+        </Card>
       </div>
     );
   }
@@ -134,9 +126,9 @@ function ProblemDetails() {
   if (error) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
+        <Card className="mx-auto w-full max-w-4xl p-6 shadow-card sm:p-8">
+          <ErrorState message={error} onRetry={() => window.location.reload()} />
+        </Card>
       </div>
     );
   }
@@ -144,9 +136,9 @@ function ProblemDetails() {
   if (!problem) {
     return (
       <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
-          <p className="text-sm text-paper/60">Failed to load problem.</p>
-        </div>
+        <Card className="mx-auto w-full max-w-4xl p-6 shadow-card sm:p-8">
+          <EmptyState message="Failed to load problem." />
+        </Card>
       </div>
     );
   }
@@ -168,6 +160,9 @@ function ProblemDetails() {
     const nextTheme = event.target.value;
 
     setTheme(nextTheme);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("editor-theme", nextTheme);
+    }
   };
 
   const handleRun = async () => {
@@ -264,46 +259,54 @@ function ProblemDetails() {
     const normalizedVerdict = String(verdict ?? "").toLowerCase();
 
     if (normalizedVerdict === "pending") {
-      return "border border-paper/30 text-paper/60 font-display uppercase tracking-wider";
+      return "border border-verdict-pending/40 bg-verdict-pending/10 text-verdict-pending";
     }
 
     if (normalizedVerdict === "accepted") {
-      return "border border-signal text-signal font-display uppercase tracking-wider";
+      return "border border-verdict-accepted/40 bg-verdict-accepted/10 text-verdict-accepted";
     }
 
-    return "border border-reject text-reject font-display uppercase tracking-wider";
+    if (normalizedVerdict === "wrong") {
+      return "border border-verdict-wrong/40 bg-verdict-wrong/10 text-verdict-wrong";
+    }
+
+    if (normalizedVerdict === "tle") {
+      return "border border-verdict-tle/40 bg-verdict-tle/10 text-verdict-tle";
+    }
+
+    if (normalizedVerdict === "mle") {
+      return "border border-verdict-mle/40 bg-verdict-mle/10 text-verdict-mle";
+    }
+
+    return "border border-verdict-error/40 bg-verdict-error/10 text-verdict-error";
   };
 
   return (
     <div className="min-h-screen bg-transparent px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg sm:p-8">
+      <Card className="mx-auto w-full max-w-4xl p-6 shadow-card sm:p-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-paper">{title}</h1>
-            <p className="mt-2 text-sm text-paper/60">
+            <h1 className="text-2xl font-semibold text-text-primary">{title}</h1>
+            <p className="mt-2 text-sm text-text-secondary">
               Time Limit: {timeLimitMs ?? "-"} ms · Memory Limit: {memoryLimitKb ?? "-"} KB
             </p>
           </div>
 
-          <span
-            className={`inline-flex w-fit rounded-md px-3 py-1 text-xs font-semibold ${getDifficultyBadgeClasses(difficulty)}`}
-          >
-            {difficulty}
-          </span>
+          <Badge value={difficulty} variant="difficulty" />
         </div>
 
-        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-paper/80 sm:p-6">
+        <div className="mt-6 rounded-2xl border border-border-subtle/80 bg-bg-surface/70 p-4 text-sm leading-6 text-text-secondary sm:p-6">
           <div className="whitespace-pre-wrap">{description}</div>
         </div>
 
-        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 shadow-sm sm:p-6">
+        <div className="mt-6 rounded-2xl border border-border-subtle/80 bg-bg-surface/50 p-4 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-paper/80" htmlFor="language">
+                <label className="mb-1 block text-sm font-medium text-text-primary" htmlFor="language">
                   Language
                 </label>
-                <select
+                <Select
                   id="language"
                   value={language}
                   onChange={handleLanguageChange}
@@ -313,14 +316,14 @@ function ProblemDetails() {
                   <option value="python">Python</option>
                   <option value="java">Java</option>
                   <option value="c">C</option>
-                </select>
+                </Select>
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-paper/80" htmlFor="theme">
+                <label className="mb-1 block text-sm font-medium text-text-primary" htmlFor="theme">
                   Theme
                 </label>
-                <select
+                <Select
                   id="theme"
                   value={theme}
                   onChange={handleThemeChange}
@@ -328,12 +331,12 @@ function ProblemDetails() {
                 >
                   <option value="vs-dark">Dark</option>
                   <option value="light">Light</option>
-                </select>
+                </Select>
               </div>
             </div>
           </div>
 
-          <div className="mt-4 overflow-hidden rounded-xl border border-white/10">
+          <div className="mt-4 overflow-hidden rounded-xl border border-border-subtle/80">
             <Editor
               height="500px"
               language={language}
@@ -349,7 +352,7 @@ function ProblemDetails() {
           </div>
 
           <div className="mt-4">
-            <label className="mb-1 block text-sm font-medium text-paper/80" htmlFor="customInput">
+            <label className="mb-1 block text-sm font-medium text-text-primary" htmlFor="customInput">
               Custom Input
             </label>
             <textarea
@@ -358,7 +361,7 @@ function ProblemDetails() {
               value={customInput}
               onChange={(event) => setCustomInput(event.target.value)}
               placeholder="Enter custom input here"
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-paper outline-none transition placeholder:text-paper/40 focus:border-signal focus:ring-2 focus:ring-signal/20"
+              className="w-full rounded-lg border border-border-subtle/80 bg-bg-surface-hover/70 px-3 py-2 text-text-primary outline-none transition placeholder:text-text-secondary focus:border-accent-primary focus:ring-2 focus:ring-accent-primary/20"
             />
           </div>
 
@@ -368,7 +371,7 @@ function ProblemDetails() {
                 type="button"
                 onClick={handleRun}
                 disabled={running}
-                className="rounded-lg bg-signal px-4 py-2 text-sm font-medium text-ink transition hover:bg-signal-dark disabled:cursor-not-allowed disabled:opacity-70"
+                className="rounded-lg bg-accent-primary px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-primary-hover disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {running ? "Running..." : "Run"}
               </button>
@@ -377,7 +380,7 @@ function ProblemDetails() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="rounded-lg border border-signal bg-transparent px-4 py-2 text-sm font-medium text-signal transition hover:bg-signal/10 disabled:cursor-not-allowed disabled:opacity-70"
+                className="rounded-lg border border-accent-primary/40 bg-transparent px-4 py-2 text-sm font-medium text-accent-primary transition hover:bg-accent-primary/10 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {submitting
                   ? submission?.verdict === "pending"
@@ -388,35 +391,35 @@ function ProblemDetails() {
             </div>
 
             {executionTime !== null ? (
-              <p className="text-xs text-paper/40">Executed in {executionTime} ms</p>
+              <p className="text-xs text-text-secondary">Executed in {executionTime} ms</p>
             ) : null}
           </div>
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
-            <p className="mb-2 text-sm font-medium text-paper/80">Output</p>
+          <div className="mt-4 rounded-2xl border border-border-subtle/80 bg-bg-surface/70 p-4">
+            <p className="mb-2 text-sm font-medium text-text-primary">Output</p>
 
             {runError ? (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              <div className="rounded-lg border border-verdict-wrong/30 bg-verdict-wrong/10 px-3 py-2 text-sm text-verdict-wrong">
                 {runError}
               </div>
             ) : output ? (
-              <pre className="overflow-x-auto rounded-lg bg-slate-900 px-4 py-3 font-mono text-sm text-paper whitespace-pre-wrap">
+              <pre className="overflow-x-auto rounded-lg bg-base px-4 py-3 font-display text-sm text-text-primary whitespace-pre-wrap">
                 {output}
               </pre>
             ) : (
-              <div className="rounded-lg border border-dashed border-white/10 px-3 py-4 text-sm text-paper/40">
+              <div className="rounded-lg border border-dashed border-border-subtle/80 px-3 py-4 text-sm text-text-secondary">
                 Run your code to see output here
               </div>
             )}
           </div>
 
           {submitError ? (
-            <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <div className="mt-4 rounded-xl border border-verdict-wrong/30 bg-verdict-wrong/10 px-4 py-3 text-sm text-verdict-wrong">
               {submitError}
             </div>
           ) : submission ? (
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
-              <p className="mb-2 text-sm font-medium text-paper/80">Verdict</p>
+            <div className="mt-4 rounded-2xl border border-border-subtle/80 bg-bg-surface/70 p-4">
+              <p className="mb-2 text-sm font-medium text-text-primary">Verdict</p>
 
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
@@ -434,11 +437,11 @@ function ProblemDetails() {
                   </span>
 
                   {submission.verdict === "pending" ? (
-                    <span className="text-xs text-paper/40">Polling every 2 seconds</span>
+                    <span className="text-xs text-text-secondary">Polling every 2 seconds</span>
                   ) : null}
                 </div>
 
-                <div className="text-xs text-paper/40">
+                <div className="text-xs text-text-secondary">
                   {submission.execution_time_ms != null ? (
                     <span>Execution Time: {submission.execution_time_ms} ms</span>
                   ) : null}
@@ -453,7 +456,7 @@ function ProblemDetails() {
             </div>
           ) : null}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
